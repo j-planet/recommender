@@ -1,6 +1,6 @@
 import sys
 
-#To show some messages:
+import pickle
 import recsys.algorithm
 recsys.algorithm.VERBOSE = True
 
@@ -28,6 +28,8 @@ K=100
 svd = SVD()
 svd.set_data(train)
 svd.compute(k=K, min_values=5, pre_normalize=None, mean_center=True, post_normalize=True)
+
+pickle.dump(svd, open('./model/svd.obj', 'w'))
 
 #Evaluation using prediction-based metrics
 rmse = RMSE()
