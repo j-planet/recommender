@@ -1,3 +1,5 @@
+__author__ = 'jennyyuejin'
+
 import sys
 
 import recsys.algorithm
@@ -7,8 +9,12 @@ from recsys.algorithm.factorize import SVD
 from recsys.datamodel.data import Data
 from recsys.evaluation.prediction import RMSE, MAE
 
+# svd = pickle.load(open('model/svd.obj', 'r'))
+svd = SVD()
+svd.load_model('./model/svd.obj.zip')
+
 #Dataset
-PERCENT_TRAIN = 80
+PERCENT_TRAIN = 0
 data = Data()
 data.load('/Users/jennyyuejin/recommender/Data/u.data',
           sep='\t',
@@ -20,30 +26,14 @@ data.load('/Users/jennyyuejin/recommender/Data/u.data',
 #   'ids': int -> Ids (row and col ids) are integers (not strings)
 
 #Train & Test data
-train, test = data.split_train_test(percent=PERCENT_TRAIN, shuffle_data=True)
-
-#Create SVD
-K=100
-svd = SVD()
-svd.set_data(train)
-svd.compute(k=K, min_values=5, pre_normalize=None, mean_center=True, post_normalize=True)
-
-# save
-# svd.set_data(None)  # clear data before saving
-# pickle.dump(svd, open('./model/svd.obj', 'w'))
-svd.save_model('./model/svd.obj.zip',
-    {'k': K, 'min_values': 5,
-     'pre_normalize': None, 'mean_center': True, 'post_normalize': True})
-
-svd_pred = SVD()
-svd_pred.load_model('./model/svd.obj.zip')
+_, test = data.split_train_test(percent=PERCENT_TRAIN, shuffle_data=False)
 
 #Evaluation using prediction-based metrics
 rmse = RMSE()
 mae = MAE()
 for rating, item_id, user_id in test.get():
     try:
-        pred_rating = svd_pred.predict(item_id, user_id)
+        pred_rating = svd.predict(item_id, user_id)
         rmse.add(rating, pred_rating)
         mae.add(rating, pred_rating)
     except KeyError:
