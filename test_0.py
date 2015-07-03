@@ -64,7 +64,9 @@ if __name__ == '__main__':
     print '------ evaluating original'
 
     # similarity between items x and y
-    svd.similarity(1, 3)
+    for prodid1 in [0, 1, 3, 4]:
+        for prodid2 in [0, 1, 3, 4]:
+            print prodid1, prodid2, svd.similarity(prodid1, prodid2)
 
     # similar to item x
     svd.similar(1)
